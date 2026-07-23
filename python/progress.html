@@ -1,1 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>進捗管理</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="curriculum-header">
+            <h1>📊 進捗管理</h1>
+            <nav class="breadcrumb">
+                <a href="index.html">← Python トップへ</a>
+            </nav>
+        </header>
 
+        <div class="progress-form">
+            <h2>あなたの名前を入力：</h2>
+            <input type="text" id="studentName" placeholder="名前">
+            <button onclick="loadProgress()">進捗を表示</button>
+        </div>
+
+        <div id="progressDisplay" style="display:none;">
+            <h2 id="displayName"></h2>
+            
+            <div class="progress-grid">
+                <div class="genre-card">
+                    <h3>💣 Minesweeper</h3>
+                    <div class="problem-checkboxes">
+                        <label>
+                            <input type="checkbox" id="ms1" onchange="saveProgress()">
+                            課題1（虫食い）
+                        </label>
+                        <label>
+                            <input type="checkbox" id="ms2" onchange="saveProgress()">
+                            課題2（デバッグ）
+                        </label>
+                        <label>
+                            <input type="checkbox" id="ms3" onchange="saveProgress()">
+                            課題3（ミッション）
+                        </label>
+                    </div>
+                </div>
+
+                <div class="genre-card">
+                    <h3>➕ 足し算クイズ</h3>
+                    <div class="problem-checkboxes">
+                        <label>
+                            <input type="checkbox" id="aq1" onchange="saveProgress()">
+                            課題1（虫食い）
+                        </label>
+                        <label>
+                            <input type="checkbox" id="aq2" onchange="saveProgress()">
+                            課題2（デバッグ）
+                        </label>
+                        <label>
+                            <input type="checkbox" id="aq3" onchange="saveProgress()">
+                            課題3（ミッション）
+                        </label>
+                    </div>
+                </div>
+
+                <div class="genre-card">
+                    <h3>🐍 Snake</h3>
+                    <div class="problem-checkboxes">
+                        <label>
+                            <input type="checkbox" id="s1" onchange="saveProgress()">
+                            課題1（虫食い）
+                        </label>
+                        <label>
+                            <input type="checkbox" id="s2" onchange="saveProgress()">
+                            課題2（デバッグ）
+                        </label>
+                        <label>
+                            <input type="checkbox" id="s3" onchange="saveProgress()">
+                            課題3（ミッション）
+                        </label>
+                    </div>
+                </div>
+
+                <div class="genre-card">
+                    <h3>🐦 Flappy Bird</h3>
+                    <div class="problem-checkboxes">
+                        <label>
+                            <input type="checkbox" id="fb1" onchange="saveProgress()">
+                            課題1（虫食い）
+                        </label>
+                        <label>
+                            <input type="checkbox" id="fb2" onchange="saveProgress()">
+                            課題2（デバッグ）
+                        </label>
+                        <label>
+                            <input type="checkbox" id="fb3" onchange="saveProgress()">
+                            課題3（ミッション）
+                        </label>
+                    </div>
+                </div>
+
+                <div class="genre-card">
+                    <h3>🏓 Pong</h3>
+                    <div class="problem-checkboxes">
+                        <label>
+                            <input type="checkbox" id="p1" onchange="saveProgress()">
+                            課題1（虫食い）
+                        </label>
+                        <label>
+                            <input type="checkbox" id="p2" onchange="saveProgress()">
+                            課題2（デバッグ）
+                        </label>
+                        <label>
+                            <input type="checkbox" id="p3" onchange="saveProgress()">
+                            課題3（ミッション）
+                        </label>
+                    </div>
+                </div>
+
+                <div class="genre-card">
+                    <h3>2️⃣0️⃣4️⃣8</h3>
+                    <div class="problem-checkboxes">
+                        <label>
+                            <input type="checkbox" id="t1" onchange="saveProgress()">
+                            課題1（虫食い）
+                        </label>
+                        <label>
+                            <input type="checkbox" id="t2" onchange="saveProgress()">
+                            課題2（デバッグ）
+                        </label>
+                        <label>
+                            <input type="checkbox" id="t3" onchange="saveProgress()">
+                            課題3（ミッション）
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-summary">
+                <h3>📈 進捗サマリー</h3>
+                <p>完了：<span id="completedCount">0</span> / 18問</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2024 Python Curriculum</p>
+        </footer>
+    </div>
+
+    <script src="assets/script.js"></script>
+    <script>
+        function loadProgress() {
+            const name = document.getElementById('studentName').value;
+            if (!name) {
+                alert('名前を入力してください');
+                return;
+            }
+            
+            const progress = JSON.parse(localStorage.getItem(`progress_${name}`) || '{}');
+            
+            Object.keys(progress).forEach(key => {
+                const elem = document.getElementById(key);
+                if (elem) elem.checked = progress[key];
+            });
+            
+            document.getElementById('displayName').textContent = `${name} さんの進捗`;
+            document.getElementById('progressDisplay').style.display = 'block';
+            
+            updateProgressSummary(name);
+        }
+
+        function saveProgress() {
+            const name = document.getElementById('studentName').value;
+            if (!name) return;
+
+            const progress = {};
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                progress[cb.id] = cb.checked;
+            });
+
+            localStorage.setItem(`progress_${name}`, JSON.stringify(progress));
+            updateProgressSummary(name);
+        }
+
+        function updateProgressSummary(name) {
+            const completed = document.querySelectorAll('input[type="checkbox"]:checked').length;
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('progressFill').style.width = (completed / 18) * 100 + '%';
+        }
+    </script>
+</body>
+</html>
